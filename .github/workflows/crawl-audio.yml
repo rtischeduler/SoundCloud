@@ -38,6 +38,7 @@ jobs:
       - name: Crawl page into refAudio/
         env:
           REF_DIR: refAudio
+          FOLLOW_PAGES: "0"
           CRAWL_URL: ${{ inputs.url || 'https://audio.com' }}
           MAX_FILES: ${{ inputs.max_files }}
           EXTRA_ORIGINS: ${{ inputs.extra_origins || 'https://www.audio.com' }}

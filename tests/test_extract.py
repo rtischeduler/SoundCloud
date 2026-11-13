@@ -26,3 +26,8 @@ def test_http_falls_back_to_cffi_on_403():
 def test_skips_images():
     assert c.is_image_url("https://audio.com/a/b.PNG?x=1") and c.is_image_url("https://x.com/i.svg")
     assert not c.is_image_url("https://audio.com/app.js") and not c.is_image_url("https://audio.com/page")
+
+def test_links_assets_only():
+    l = c.Links()
+    l.feed('<a href="/tools/x">p</a><script src="/a.js"></script><link rel="stylesheet" href="/s.css"><link rel="canonical" href="https://audio.com/"><meta property="og:url" content="https://audio.com/y">')
+    assert l.urls == ["/a.js", "/s.css"], l.urls

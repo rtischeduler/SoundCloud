@@ -53,13 +53,21 @@ IMG_EXT = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".svg", ".ico", ".
 def is_image_url(u):
     return SKIP_IMAGES and urllib.parse.urlparse(u).path.lower().endswith(IMG_EXT)
 
+FOLLOW_PAGES = os.environ.get("FOLLOW_PAGES", "0") == "1"
+ASSET_RELS = {"stylesheet", "preload", "modulepreload", "prefetch", "manifest", "icon", "shortcut", "apple-touch-icon"}
+
 class Links(HTMLParser):
     def __init__(self): super().__init__(); self.urls = []
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
+        if tag == "a" and not FOLLOW_PAGES: return
+        rels = set((a.get("rel") or "").lower().split())
         for k in ("src", "href", "data-src", "poster", "content"):
             v = a.get(k)
-            if v and (k != "content" or v.startswith(("/", "./", "http"))): self.urls.append(v)
+            if not v: continue
+            if k == "href" and tag == "link" and not FOLLOW_PAGES and not (rels & ASSET_RELS): continue
+            if k == "content" and (not FOLLOW_PAGES or not v.startswith(("/", "./", "http"))): continue
+            self.urls.append(v)
         if a.get("srcset"):
             self.urls += [p.strip().split()[0] for p in a["srcset"].split(",") if p.strip()]
 
