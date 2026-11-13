@@ -22,3 +22,7 @@ def test_http_falls_back_to_cffi_on_403():
     c.urllib.request.urlopen = lambda *a, **k: (_ for _ in ()).throw(urllib.error.HTTPError("u", 403, "Forbidden", {"server": "cloudflare"}, io.BytesIO(b"")))
     c._cffi = lambda url, method, h, body: (url, "text/html", b"<html>ok</html>")
     assert c.http("https://audio.com")[2] == b"<html>ok</html>"
+
+def test_skips_images():
+    assert c.is_image_url("https://audio.com/a/b.PNG?x=1") and c.is_image_url("https://x.com/i.svg")
+    assert not c.is_image_url("https://audio.com/app.js") and not c.is_image_url("https://audio.com/page")

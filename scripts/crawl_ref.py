@@ -47,6 +47,12 @@ def http(url, method="GET", headers=None, body=None, binary=False):
             except ImportError: print("  curl_cffi not installed, no browser-TLS fallback", file=sys.stderr)
         raise
 
+SKIP_IMAGES = os.environ.get("SKIP_IMAGES", "1") != "0"
+IMG_EXT = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".svg", ".ico", ".bmp", ".tif", ".tiff", ".apng", ".heic", ".jfif")
+
+def is_image_url(u):
+    return SKIP_IMAGES and urllib.parse.urlparse(u).path.lower().endswith(IMG_EXT)
+
 class Links(HTMLParser):
     def __init__(self): super().__init__(); self.urls = []
     def handle_starttag(self, tag, attrs):
@@ -85,11 +91,13 @@ def crawl(start_url, token):
         key = strip(url)
         if key in seen: continue
         seen.add(key)
+        if is_image_url(url): continue
         try:
             final, ctype, data = http(url)
         except Exception as e:
             print(f"  skip {key}: {e}", file=sys.stderr); continue
         if not inside(final): continue
+        if SKIP_IMAGES and ctype.lower().startswith("image/"): continue
         dest = local_path(strip(final) if urllib.parse.urlparse(final).path not in ("", "/") or not manifest else key, ctype)
         if not dest.startswith(REF): continue
         os.makedirs(os.path.dirname(dest), exist_ok=True)
