@@ -410,6 +410,7 @@ const fmt = (ms) => { const s = Math.round(ms / 1000); return Math.floor(s / 60)
 function render(list, append) {
   const g = $("grid"); if (!append) g.textContent = "";
   for (const o of list) {
+    if (o.kind === "track" && isDrm(o)) continue;   // hide DRM-only tracks
     const d = document.createElement("div"); d.className = "item";
     const img = document.createElement("img"); img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.src = art(o);
     const t = document.createElement("div"), b = document.createElement("b"), s = document.createElement("small");
