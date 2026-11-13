@@ -1,0 +1,15 @@
+{
+  "client_ids": {
+    "qLcgHhXgeEFFaSolTB9I71LBsqncsD93": "ref/a-v2.sndcdn.com/assets/55-a70a06aa.js"
+  },
+  "api_urls": [
+    "https://api-auth.soundcloud.com/",
+    "https://api-v2.soundcloud.com/",
+    "https://api.soundcloud.com/"
+  ],
+  "search_paths": [
+    "search",
+    "search/queries",
+    "search/suggest/tags"
+  ]
+}
