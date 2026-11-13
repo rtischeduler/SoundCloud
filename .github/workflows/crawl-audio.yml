@@ -1,0 +1,57 @@
+name: Crawl audio.com
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Page to crawl (same-origin assets are saved to refAudio/)"
+        default: "https://audio.com"
+      extra_origins:
+        description: "Comma-separated extra origins to follow (CDN/API hosts)"
+        default: "https://www.audio.com"
+      max_files:
+        description: "Max files to crawl"
+        default: "2000"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crawl-audio
+  cancel-in-progress: true
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Crawl page into refAudio/
+        env:
+          REF_DIR: refAudio
+          CRAWL_URL: ${{ inputs.url || 'https://audio.com' }}
+          MAX_FILES: ${{ inputs.max_files }}
+          EXTRA_ORIGINS: ${{ inputs.extra_origins || 'https://www.audio.com' }}
+        run: |
+          python scripts/crawl_ref.py
+
+      - name: Commit refAudio/ to main
+        env:
+          CRAWL_URL: ${{ inputs.url || 'https://audio.com' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A refAudio
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Update refAudio/ crawl of ${CRAWL_URL}"
+            git pull --rebase origin main
+            git push origin main
+          fi

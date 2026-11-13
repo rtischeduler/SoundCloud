@@ -4,7 +4,8 @@ from html.parser import HTMLParser
 from collections import deque
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REF = os.path.join(ROOT, "ref")
+REF_DIR = os.environ.get("REF_DIR", "ref").strip().strip("/") or "ref"
+REF = os.path.join(ROOT, REF_DIR)
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
 MAX_FILES = int(os.environ.get("MAX_FILES", "2000"))
 

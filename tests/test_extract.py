@@ -11,3 +11,8 @@ def test_extract_api():
     assert "https://api-v2.soundcloud.com/search/tracks" in r["api_urls"]
     assert "/search/users" in r["search_paths"]
 if __name__ == "__main__": test_extract_api(); print("ok")
+
+def test_ref_dir_env():
+    import subprocess
+    out = subprocess.run([sys.executable, "-c", "import crawl_ref as c;print(c.REF.rsplit('/',1)[-1])"], cwd=os.path.join(os.path.dirname(__file__), "..", "scripts"), env={**os.environ, "REF_DIR": "refAudio", "CRAWL_URL": "https://audio.com"}, capture_output=True, text=True).stdout.strip()
+    assert out == "refAudio", out
