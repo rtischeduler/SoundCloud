@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SoundCloud (Singuloxy)</title>
+<style>
+:root{--bg:#0d0d0f;--card:#17171b;--line:#2a2a31;--ink:#f4f4f6;--dim:#9a9aa5;--accent:#ff5500}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:500 15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:0 0 110px}
+header{position:sticky;top:0;z-index:5;background:rgba(13,13,15,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.logo{font-weight:800;color:var(--accent);white-space:nowrap}
+form{flex:1;min-width:200px;display:flex;gap:8px}
+input{flex:1;min-width:0;background:#101013;border:1px solid var(--line);border-radius:999px;padding:10px 16px;color:var(--ink);font:inherit;outline:none}
+input:focus{border-color:var(--accent)}
+button{appearance:none;border:0;border-radius:999px;padding:10px 18px;background:var(--accent);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+button.on{background:var(--accent);color:#fff}
+.tabs{display:flex;gap:6px}
+#status{padding:10px 16px;color:var(--dim);font-size:.85rem}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;padding:8px 16px}
+.item{background:var(--card);border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid transparent}
+.item:hover{border-color:var(--accent)}
+.item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#222}
+.item div{padding:8px 10px;font-size:.85rem}
+.item b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item small{color:var(--dim);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#more{display:none;margin:10px auto}
+#player{position:fixed;left:0;right:0;bottom:0;background:#111114;border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:12px;align-items:center}
+#player img{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#222}
+#now{flex:0 1 220px;min-width:0;font-size:.85rem}#now b,#now small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#now small{color:var(--dim)}
+audio{flex:1;min-width:0;height:38px}
+</style></head><body>
+<header><span class="logo">&#9729; SoundCloud</span>
+<form id="f"><input id="q" placeholder="Search tracks, artists, playlists" autocomplete="off"><button>Search</button></form>
+<div class="tabs"><button type="button" class="ghost on" data-k="tracks">Tracks</button><button type="button" class="ghost" data-k="users">People</button><button type="button" class="ghost" data-k="playlists_without_albums">Playlists</button></div></header>
+<div id="status">Starting proxy&hellip;</div><div id="grid"></div><button id="more" class="ghost">Load more</button>
+<div id="player"><img id="art" alt=""><div id="now"><b>Nothing playing</b><small></small></div><audio id="au" controls preload="none"></audio></div>
+<script type="module">
+const BAD_KEY = "WB_BAD";
+const BAD_TTL_MS = 6 * 3600000;
+
+function createBadList({ storage, now = () => Date.now(), ttl = BAD_TTL_MS, key = (entry) => String(entry) } = {}) {
+  const box = () => {
+    try { return storage || globalThis.localStorage || null; } catch { return null; }
+  };
+  const read = () => {
+    const s = box();
+    if (!s) return {};
+    try {
+      const v = JSON.parse(s.getItem(BAD_KEY));
+      return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+    } catch { return {}; }
+  };
+  const live = () => {
+    const t = now(), out = {};
+    for (const [k, ts] of Object.entries(read())) if (typeof ts === "number" && t - ts < ttl) out[k] = ts;
+    return out;
+  };
+  return {
+    has: (entry) => Object.hasOwn(live(), key(entry)),
+    add(entry) {
+      const s = box();
+      if (!s) return;
+      const v = live();
+      v[key(entry)] = now();
+      try { s.setItem(BAD_KEY, JSON.stringify(v)); } catch {}
+    },
+    clear() {
+      const s = box();
+      try { if (s) s.removeItem(BAD_KEY); } catch {}
+    },
+  };
+}
+
+const KSTUFF = "lotsacookie/kstuff";
+const STORAGE = "TongSherbet/storage";
+const LIST_PATH = "Assets/json/wss.json";
+const jsd = (repo) => [
+  `https://cdn.jsdelivr.net/gh/${repo}@main/`,
+  `https://fastly.jsdelivr.net/gh/${repo}@main/`,
+  `https://gcore.jsdelivr.net/gh/${repo}@main/`,
+];
+const KSTUFF_MIRRORS = [...jsd(KSTUFF), `https://raw.githubusercontent.com/${KSTUFF}/main/`, `https://cdn.statically.io/gh/${KSTUFF}/main/`];
+const STORAGE_MIRRORS = [...jsd(STORAGE), `https://raw.githubusercontent.com/${STORAGE}/main/`];
+const BUILTIN = [
+  "cdn.northstreetumc.org", "cdn.vipersfutbol.com", "cdn.pcesc.org", "cdn.kcchallengevbc.com",
+  "cdn.slcbmooc.org", "cdn.topstargym.net", "cdn.goaplytexas.org", "cdn.clearfieldswimming.com",
+  "wss://athollcottage.com/connection/", "wss://api.personalloanonline.net/ws/",
+  "wss://kristenblackburnvolleyballcamps.com/socket/", "wss://southpadreislandkiteboarding.com/socket/",
+];
+const FALLBACK = "wss://api.personalloanonline.net/ws/";
+
+const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+const WSS_RE = /^wss:\/\/[a-z0-9.-]+(:\d{1,5})?(\/[\w\-./]*)?$/i;
+const isBackup = (e) => e.includes("://");
+const toWss = (e) => {
+  e = String(e || "").trim();
+  if (!e) return null;
+  const u = isBackup(e) ? e : `wss://${e}/`;
+  return u.endsWith("/") ? u : u + "/";
+};
+const bad = createBadList({ key: toWss });
+function decodeLoaderList(src, hostRe, wssRe, max, depth = 0) {
+  if (depth > 3 || typeof src !== "string") return [];
+  let code = null;
+  try {
+    const stub = new Proxy({}, { get: () => (a) => { if (code === null && typeof a === "string") code = a; } });
+    new Function("globalThis", src)(stub);
+  } catch {}
+  if (!code) return [];
+  const arrays = code.match(/\[(?:\s*"[^"\\]{3,120}"\s*,?)+\s*\]/g) || [];
+  for (const arr of arrays) {
+    let vals;
+    try { vals = JSON.parse(arr.replace(/,\s*\]$/, "]")); } catch { continue; }
+    const out = [];
+    for (const v of vals) {
+      const value = String(v).trim();
+      if ((hostRe.test(value) || wssRe.test(value)) && !out.includes(value)) out.push(value);
+      if (out.length >= max) break;
+    }
+    if (out.length >= 3 && out.length >= vals.length * 0.6) return out;
+  }
+  return decodeLoaderList(code, hostRe, wssRe, max, depth + 1);
+}
+function parseServerList(src, decode = (s) => decodeLoaderList(s, HOST_RE, WSS_RE, 32)) {
+  if (typeof src !== "string") return [];
+  const text = src.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+  const block = text.match(/serverList\s*=\s*\[([\s\S]*?)\]\s*[;,]/);
+  if (!block) return decode(src);
+  const item = /(["'])((?:\\.|(?!\1)[^\\])*)\1(\s*\.split\(\s*(?:""|'')\s*\)\s*\.reverse\(\)\s*\.join\(\s*(?:""|'')\s*\))?/g;
+  const out = [];
+  let m;
+  while ((m = item.exec(block[1]))) {
+    const value = (m[3] ? [...m[2]].reverse().join("") : m[2]).trim();
+    if ((HOST_RE.test(value) || WSS_RE.test(value)) && !out.includes(value)) out.push(value);
+    if (out.length >= 32) break;
+  }
+  return out;
+}
+function decodeInSandbox(src, ms = 4000) {
+  return new Promise((resolve) => {
+    const f = document.createElement("iframe");
+    f.sandbox = "allow-scripts";
+    f.style.display = "none";
+    const done = (v) => { clearTimeout(t); removeEventListener("message", on); f.remove(); resolve(v); };
+    const t = setTimeout(() => done([]), ms);
+    const on = (e) => { if (e.source === f.contentWindow && e.data && e.data.wbDecoded) done(e.data.list || []); };
+    addEventListener("message", on);
+    f.srcdoc = `<script>const decode=${decodeLoaderList.toString()};` +
+      `addEventListener("message",e=>{let l=[];try{l=decode(e.data.src,new RegExp(e.data.h,"i"),new RegExp(e.data.w,"i"),32)}catch{}` +
+      `parent.postMessage({wbDecoded:1,list:l},"*")});parent.postMessage({wbReady:1},"*")<\/script>`;
+    const ready = (e) => {
+      if (e.source !== f.contentWindow || !e.data || !e.data.wbReady) return;
+      removeEventListener("message", ready);
+      f.contentWindow.postMessage({ src, h: HOST_RE.source, w: WSS_RE.source }, "*");
+    };
+    addEventListener("message", ready);
+    document.body.append(f);
+  });
+}
+const parseInBrowser = async (src) => parseServerList(src, (s) => decodeInSandbox(s));
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+async function fetchWith(url, type, ms = 4000) {
+  const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
+  try {
+    const r = await fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store", signal: c.signal });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r[type]();
+  } finally { clearTimeout(t); }
+}
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const b64ToText = (b) => new TextDecoder().decode(Uint8Array.from(atob(b.trim()), (c) => c.charCodeAt(0)));
+function parseWispList(json) {
+  const b64 = Array.isArray(json) ? json.find((v) => typeof v === "string" && v.trim()) : json;
+  if (typeof b64 !== "string") return [];
+  let data;
+  try { data = JSON.parse(b64ToText(b64)); } catch { return []; }
+  const out = [];
+  (function walk(v) {
+    if (typeof v === "string" && /^wss:\/\//i.test(v.trim())) out.push(v.trim());
+    else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") Object.values(v).forEach(walk);
+  })(data);
+  return [...new Set(out)];
+}
+async function fetchWispList(mirrors = KSTUFF_MIRRORS) {
+  try { return parseWispList(await Promise.any(mirrors.map((m) => fetchWith(m + LIST_PATH, "json", 5000)))); }
+  catch { return []; }
+}
+async function syncStorageList(mirrors = STORAGE_MIRRORS) {
+  const cached = store.get("WB_SYNC");
+  const cachedList = cached && Array.isArray(cached.list) ? cached.list.filter((u) => HOST_RE.test(u) || WSS_RE.test(u)) : [];
+  if (cachedList.length && Date.now() - (cached.ts || 0) < 3600000) return cachedList;
+  const failed = store.get("WB_SYNCF");
+  if (failed && Date.now() - (failed.ts || 0) < 600000) return cachedList;
+  for (const m of mirrors) {
+    try {
+      const list = await parseInBrowser(await fetchWith(m + "loader.js", "text", 3500));
+      if (!list.length) throw new Error("no servers in loader.js");
+      store.set("WB_SYNC", { ts: Date.now(), list });
+      return list;
+    } catch (e) { console.warn("[wisp] storage sync failed:", m, e && e.message || e); }
+  }
+  store.set("WB_SYNCF", { ts: Date.now() });
+  return cachedList;
+}
+function probeWisp(entry, timeoutMs = 3000) {
+  return new Promise((resolve) => {
+    let ws;
+    try { ws = new WebSocket(toWss(entry)); } catch { return resolve(null); }
+    ws.binaryType = "arraybuffer";
+    let connected = false, sentAt = 0;
+    const streamId = (Math.floor(Math.random() * 0xFFFFFFFE) + 1) >>> 0;
+    const finish = (ping) => { clearTimeout(timer); ws.onmessage = ws.onerror = ws.onclose = null; try { ws.close(); } catch {} resolve(ping); };
+    const timer = setTimeout(() => finish(null), timeoutMs);
+    ws.onmessage = (e) => {
+      if (!(e.data instanceof ArrayBuffer) || e.data.byteLength < 5) return;
+      const v = new DataView(e.data), type = v.getUint8(0), stream = v.getUint32(1, true);
+      if (!connected) {
+        if (type === 5 && stream === 0) ws.send(new Uint8Array([5, 0, 0, 0, 0, 2, 1]));
+        else if (type === 3 && stream === 0) {
+          connected = true;
+          const host = new TextEncoder().encode("127.0.0.1");
+          const buf = new ArrayBuffer(8 + host.length), dv = new DataView(buf);
+          dv.setUint8(0, 1); dv.setUint32(1, streamId, true); dv.setUint8(5, 1); dv.setUint16(6, 69, true);
+          new Uint8Array(buf).set(host, 8);
+          sentAt = performance.now();
+          ws.send(buf);
+        }
+        return;
+      }
+      if (stream === streamId) finish(Math.round(performance.now() - sentAt));
+    };
+    ws.onerror = ws.onclose = () => finish(null);
+  });
+}
+
+async function firstAlive(entries, say, label, waveSize = 6) {
+  const alive = [];
+  for (let i = 0; i < entries.length && !alive.length; i += waveSize) {
+    const wave = entries.slice(i, i + waveSize);
+    say(`${label} (${Math.min(i + waveSize, entries.length)}/${entries.length})…`);
+    const pings = await Promise.all(wave.map((e) => probeWisp(e)));
+    wave.forEach((e, j) => { if (pings[j] !== null) alive.push({ entry: e, ping: pings[j] }); });
+  }
+  return alive.sort((a, b) => a.ping - b.ping)[0] || null;
+}
+function provisionalWisp(network) {
+  const last = store.get("WB_LAST");
+  const url = toWss(last && last.entry && !bad.has(last.entry) ? last.entry : FALLBACK);
+  network.set_websocket(url);
+  return url;
+}
+async function pickWisp(network, say = () => {}, opts = {}) {
+  const budgetMs = opts.budgetMs || 15000;
+  const excluded = new Set((opts.exclude || []).map(toWss));
+  const allowed = (entry) => !excluded.has(toWss(entry));
+  const prefer = (list) => {
+    const ok = list.filter(allowed);
+    return [...ok.filter((e) => !bad.has(e)), ...ok.filter((e) => bad.has(e))];
+  };
+  const apply = (entry) => {
+    const url = toWss(entry);
+    network.set_websocket(url);
+    try { network.set_wisp_pool([url]); } catch {}
+    store.set("WB_LAST", { entry, ts: Date.now() });
+    return url;
+  };
+  const search = async () => {
+    const last = store.get("WB_LAST");
+    if (last && last.entry && allowed(last.entry) && !bad.has(last.entry) && Date.now() - last.ts < 600000 && (await probeWisp(last.entry)) !== null) return apply(last.entry);
+
+    say("Syncing wisp list…");
+    const synced = await syncStorageList(opts.storageBases ? [...opts.storageBases, ...STORAGE_MIRRORS.filter((m) => !opts.storageBases.includes(m))] : STORAGE_MIRRORS);
+    const all = prefer([...new Set([...synced, ...BUILTIN])]);
+    const primary = all.filter((e) => !isBackup(e));
+    const hit = await firstAlive(primary, say, "Testing wisp servers");
+    if (hit) return apply(hit.entry);
+
+    say("Trying backup wisps…");
+    const remote = await fetchWispList(opts.kstuffBases ? [...opts.kstuffBases, ...KSTUFF_MIRRORS.filter((m) => !opts.kstuffBases.includes(m))] : KSTUFF_MIRRORS);
+    const backups = prefer([...new Set([...all.filter(isBackup), FALLBACK, ...shuffle(remote.filter((u) => !all.includes(u))).slice(0, 16)])]);
+    const bhit = await firstAlive(backups, say, "Testing backup wisps");
+    if (bhit) return apply(bhit.entry);
+    return null;
+  };
+  const timeout = new Promise((r) => setTimeout(() => r(null), budgetMs));
+  try {
+    const url = await Promise.race([search(), timeout]);
+    if (url) return url;
+  } catch (e) { console.warn("[wisp] pick failed", e); }
+  console.warn("[wisp] no wisp validated, using fallback");
+  return apply([FALLBACK, ...BUILTIN.filter(isBackup)].find(allowed) || FALLBACK);
+}
+
+const DIST = "dist/sandstone.mjs";
+const BASES = [
+  "https://cdn.jsdelivr.net/gh/lotsacookie/Singuloxy@main/",
+  "https://fastly.jsdelivr.net/gh/lotsacookie/Singuloxy@main/",
+];
+
+const withTimeout = (p, ms, label) => { let t; return Promise.race([p, new Promise((_, rej) => { t = setTimeout(() => rej(new Error(label + " timed out")), ms); })]).finally(() => clearTimeout(t)); };
+
+async function loadSandstone(log) {
+  try { return await Promise.any(BASES.map((b) => withTimeout(import(b + DIST), 12000, "proxy script"))); }
+  catch { log("[proxy] CDN import failed, trying GitHub raw"); }
+  const r = await withTimeout(fetch("https://raw.githubusercontent.com/lotsacookie/Singuloxy/main/" + DIST), 12000, "GitHub raw");
+  const code = await r.text();
+  return import(URL.createObjectURL(new Blob([code], { type: "text/javascript" })));
+}
+
+let ready = null, state = null, rotating = null;
+async function verifyWisp(libcurl) {
+  const t0 = performance.now();
+  const r = await withTimeout(libcurl.fetch("https://soundcloud.com/robots.txt", { method: "GET", redirect: "manual" }), 10000, "proxy check");
+  await withTimeout(r.text(), 8000, "proxy check");
+  return Math.round(performance.now() - t0);
+}
+async function connectWisp(st, say, log) {
+  for (let i = 0; i < 4; i++) {
+    const wisp = await pickWisp(st.network, say, { exclude: st.tried, budgetMs: 12000 });
+    say("Checking proxy…");
+    try { const ms = await verifyWisp(st.libcurl); log("[proxy] wisp", String(wisp), ms + "ms"); st.wisp = String(wisp); return; }
+    catch (e) { log("[proxy] wisp failed check", String(wisp), (e && e.message) || e); bad.add(wisp); st.tried.push(wisp); }
+  }
+  throw new Error("No working proxy found. Reload to try again.");
+}
+function getProxy({ log = () => {}, say = () => {} } = {}) {
+  return (ready ||= (async () => {
+    const t0 = Date.now(), say2 = (t) => say(t + " (" + Math.round((Date.now() - t0) / 1000) + "s)");
+    say2("Loading proxy…");
+    const sandstone = await loadSandstone(log);
+    provisionalWisp(sandstone.network);
+    for (let i = 0; i < 150 && !sandstone.libcurl.ready; i++) await new Promise((r) => setTimeout(r, 100));
+    if (!sandstone.libcurl.ready) throw new Error("libcurl did not load");
+    state = { libcurl: sandstone.libcurl, network: sandstone.network, wisp: "", tried: [] };
+    await connectWisp(state, say2, log);
+    return state;
+  })().catch((e) => { ready = null; throw e; }));
+}
+async function rotateProxy(log = () => {}, say = () => {}) {
+  if (!state) return getProxy({ log, say });
+  if (rotating) return rotating;
+  rotating = (async () => {
+    log("[proxy] switching wisp");
+    if (state.wisp) { bad.add(state.wisp); state.tried.push(state.wisp); }
+    if (state.tried.length > 6) state.tried.length = 0;
+    await connectWisp(state, say, log);
+    return state;
+  })().finally(() => { rotating = null; });
+  return rotating;
+}
+window.__getProxy = getProxy;
+window.__rotateProxy = rotateProxy;
+
+// ---------- SoundCloud over the proxy (endpoints learned from ref/ crawl: client_id from a-v2.sndcdn.com bundles, api-v2 /search/*) ----------
+const $ = (id) => document.getElementById(id);
+const API = "https://api-v2.soundcloud.com";
+const CID_RE = /client_id["']?\s*[:=]\s*["']([A-Za-z0-9]{32})["']/;
+const status = (t) => { $("status").textContent = t; };
+const UA = { Accept: "application/json, text/javascript, */*; q=0.1" };
+let clientId = store.get("SC_CID"), kind = "tracks", nextHref = null, qNow = "";
+
+async function pget(url, { binary = false, retried = false } = {}) {
+  const { libcurl } = await window.__getProxy({ say: status });
+  try {
+    const r = await withTimeout(libcurl.fetch(url, { headers: UA }), 25000, "Request");
+    if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; }
+    return binary ? r.arrayBuffer() : r.text();
+  } catch (e) {
+    if (e.status || retried) throw e;
+    await window.__rotateProxy(() => {}, status);
+    return pget(url, { binary, retried: true });
+  }
+}
+const pjson = async (u) => JSON.parse(await pget(u));
+
+async function findClientId(force) {
+  if (clientId && !force) return clientId;
+  status("Finding SoundCloud client id…");
+  const html = await pget("https://soundcloud.com/");
+  const scripts = [...html.matchAll(/<script[^>]+src="(https:\/\/a-v2\.sndcdn\.com\/assets\/[^"]+\.js)"/g)].map((m) => m[1]).reverse();
+  for (const s of scripts) {
+    try { const m = CID_RE.exec(await pget(s)); if (m) { clientId = m[1]; store.set("SC_CID", clientId); return clientId; } } catch {}
+  }
+  throw new Error("client_id not found in SoundCloud bundles");
+}
+async function api(url) {
+  const id = await findClientId();
+  const u = url + (url.includes("?") ? "&" : "?") + "client_id=" + id;
+  try { return await pjson(u); }
+  catch (e) { if (e.status === 401 || e.status === 403) { await findClientId(true); return pjson(url + (url.includes("?") ? "&" : "?") + "client_id=" + clientId); } throw e; }
+}
+const art = (o) => (o.artwork_url || (o.user && o.user.avatar_url) || o.avatar_url || "").replace("-large", "-t300x300");
+const fmt = (ms) => { const s = Math.round(ms / 1000); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+
+function render(list, append) {
+  const g = $("grid"); if (!append) g.textContent = "";
+  for (const o of list) {
+    const d = document.createElement("div"); d.className = "item";
+    const img = document.createElement("img"); img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.src = art(o);
+    const t = document.createElement("div"), b = document.createElement("b"), s = document.createElement("small");
+    b.textContent = o.title || o.username || "Untitled";
+    s.textContent = o.kind === "track" ? (o.user ? o.user.username : "") + " · " + fmt(o.duration || 0)
+      : o.kind === "user" ? (o.followers_count || 0) + " followers" : (o.user ? o.user.username : "") + " · " + (o.track_count || 0) + " tracks";
+    t.append(b, s); d.append(img, t);
+    d.onclick = () => (o.kind === "track" ? play(o) : o.kind === "playlist" ? openPlaylist(o) : openUser(o));
+    g.append(d);
+  }
+}
+async function show(data, append) {
+  render(data.collection || [], append);
+  nextHref = data.next_href || null;
+  $("more").style.display = nextHref ? "block" : "none";
+  status((data.total_results != null ? data.total_results + " results" : (data.collection || []).length + " items"));
+}
+async function search(q) {
+  qNow = q; status("Searching…");
+  const url = API + "/search/" + kind + "?q=" + encodeURIComponent(q) + "&limit=24&offset=0&linked_partitioning=1&app_locale=en";
+  try { await show(await api(url), false); } catch (e) { status("Search failed: " + (e.message || e)); }
+}
+async function openPlaylist(p) {
+  status("Loading playlist…");
+  try {
+    const full = await api(API + "/playlists/" + p.id + "?representation=full");
+    const ids = (full.tracks || []).map((t) => t.id);
+    const have = (full.tracks || []).filter((t) => t.title);
+    const missing = ids.filter((i) => !have.find((t) => t.id === i)).slice(0, 50);
+    const more = missing.length ? await api(API + "/tracks?ids=" + missing.join(",")) : [];
+    render([...have, ...more].map((t) => ({ ...t, kind: "track" })), false);
+    $("more").style.display = "none"; status(full.title || "Playlist");
+  } catch (e) { status("Playlist failed: " + (e.message || e)); }
+}
+async function openUser(u) {
+  status("Loading tracks…");
+  try { await show(await api(API + "/users/" + u.id + "/tracks?limit=24&linked_partitioning=1"), false); }
+  catch (e) { status("Failed: " + (e.message || e)); }
+}
+async function play(t) {
+  const au = $("au"); $("art").src = art(t);
+  $("now").firstChild.textContent = t.title; $("now").lastChild.textContent = t.user ? t.user.username : "";
+  status("Resolving stream…");
+  try {
+    const full = t.media ? t : await api(API + "/tracks/" + t.id);
+    const tc = (full.media.transcodings || []).find((x) => x.format.protocol === "progressive") || null;
+    if (!tc) throw new Error("no progressive stream (HLS only)");
+    const sep = tc.url.includes("?") ? "&" : "?";
+    const res = await api(tc.url + sep + "track_authorization=" + encodeURIComponent(full.track_authorization || ""));
+    au.onerror = async () => {   // direct CDN blocked? pull the audio through the proxy instead
+      au.onerror = null; status("Direct stream blocked, loading through proxy…");
+      try { au.src = URL.createObjectURL(new Blob([await pget(res.url, { binary: true })], { type: "audio/mpeg" })); au.play(); status("Playing (proxied)"); }
+      catch (e) { status("Stream failed: " + (e.message || e)); }
+    };
+    au.src = res.url; await au.play().catch(() => {}); status("Playing");
+  } catch (e) { status("Play failed: " + (e.message || e)); }
+}
+
+$("f").onsubmit = (e) => { e.preventDefault(); const q = $("q").value.trim(); if (q) search(q); };
+document.querySelectorAll(".tabs button").forEach((b) => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b)); kind = b.dataset.k; if (qNow) search(qNow);
+});
+$("more").onclick = async () => { if (!nextHref) return; try { await show(await api(nextHref), true); } catch (e) { status("Failed: " + (e.message || e)); } };
+window.__getProxy({ say: status }).then(() => { status("Proxy ready. Search for something."); findClientId().catch((e) => status(e.message)); }).catch((e) => status("Proxy failed: " + (e.message || e)));
+</script></body></html>
