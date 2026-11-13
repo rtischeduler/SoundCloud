@@ -357,7 +357,7 @@ window.__rotateProxy = rotateProxy;
 // ---------- SoundCloud over the proxy (endpoints learned from ref/ crawl: client_id from a-v2.sndcdn.com bundles, api-v2 /search/*) ----------
 const $ = (id) => document.getElementById(id);
 const API = "https://api-v2.soundcloud.com";
-const CID_RE = /client_id["']?\s*[:=]\s*["']([A-Za-z0-9]{32})["']/;
+const CID_RE = /client_id["']?\s*[:=]\s*\\?["']([A-Za-z0-9]{20,40})\\?["']/;
 const status = (t) => { $("status").textContent = t; };
 const UA = { Accept: "application/json, text/javascript, */*; q=0.1" };
 let clientId = store.get("SC_CID"), kind = "tracks", nextHref = null, qNow = "";
@@ -378,13 +378,22 @@ const pjson = async (u) => JSON.parse(await pget(u));
 
 async function findClientId(force) {
   if (clientId && !force) return clientId;
+  const manual = (location.hash.match(/cid=([A-Za-z0-9]{20,40})/) || [])[1];
+  if (manual) { clientId = manual; store.set("SC_CID", clientId); return clientId; }
   status("Finding SoundCloud client id…");
   const html = await pget("https://soundcloud.com/");
-  const scripts = [...html.matchAll(/<script[^>]+src="(https:\/\/a-v2\.sndcdn\.com\/assets\/[^"]+\.js)"/g)].map((m) => m[1]).reverse();
-  for (const s of scripts) {
-    try { const m = CID_RE.exec(await pget(s)); if (m) { clientId = m[1]; store.set("SC_CID", clientId); return clientId; } } catch {}
+  const urls = [...new Set([...html.matchAll(/https:\/\/a-v2\.sndcdn\.com\/assets\/[^"'\s<>]+?\.js/g)].map((m) => m[0]))].reverse();
+  const inline = CID_RE.exec(html);
+  if (inline) { clientId = inline[1]; store.set("SC_CID", clientId); return clientId; }
+  const errs = []; let fetched = 0;
+  for (let i = 0; i < urls.length; i += 4) {
+    const res = await Promise.all(urls.slice(i, i + 4).map(async (u) => {
+      try { const t = await pget(u); fetched++; return CID_RE.exec(t); } catch (e) { errs.push(String(e.message || e).slice(0, 60)); return null; }
+    }));
+    const hit = res.find(Boolean);
+    if (hit) { clientId = hit[1]; store.set("SC_CID", clientId); return clientId; }
   }
-  throw new Error("client_id not found in SoundCloud bundles");
+  throw new Error(`client_id not found (html ${html.length} B, ${urls.length} bundles, ${fetched} fetched${errs.length ? ", errors: " + errs[0] : ""}). Paste one as #cid=YOURID in the URL.`);
 }
 async function api(url) {
   const id = await findClientId();
