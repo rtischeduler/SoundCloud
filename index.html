@@ -360,7 +360,8 @@ const API = "https://api-v2.soundcloud.com";
 const CID_RE = /client_id["']?\s*[:=]\s*\\?["']([A-Za-z0-9]{20,40})\\?["']/;
 const status = (t) => { $("status").textContent = t; };
 const UA = { Accept: "application/json, text/javascript, */*; q=0.1" };
-let clientId = store.get("SC_CID"), kind = "tracks", nextHref = null, qNow = "";
+const SEED_CID = "qLcgHhXgeEFFaSolTB9I71LBsqncsD93"; // from ref/a-v2.sndcdn.com/assets/55-a70a06aa.js (crawl)
+let clientId = store.get("SC_CID") || SEED_CID, kind = "tracks", nextHref = null, qNow = "";
 
 async function pget(url, { binary = false, retried = false } = {}) {
   const { libcurl } = await window.__getProxy({ say: status });
@@ -393,6 +394,7 @@ async function findClientId(force) {
     const hit = res.find(Boolean);
     if (hit) { clientId = hit[1]; store.set("SC_CID", clientId); return clientId; }
   }
+  if (!force || clientId !== SEED_CID) { clientId = SEED_CID; return clientId; }
   throw new Error(`client_id not found (html ${html.length} B, ${urls.length} bundles, ${fetched} fetched${errs.length ? ", errors: " + errs[0] : ""}). Paste one as #cid=YOURID in the URL.`);
 }
 async function api(url) {
