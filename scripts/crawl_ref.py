@@ -18,12 +18,34 @@ OUT = os.path.join(REF, _u.netloc)
 ORIGINS = [APP_ORIGIN] + [o.strip().rstrip("/") for o in os.environ.get("EXTRA_ORIGINS", "").split(",") if o.strip()]
 inside = lambda u: any(u.startswith(o + "/") or u == o for o in ORIGINS)
 
+BROWSER = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "none", "Sec-Fetch-User": "?1",
+}
+
+def _cffi(url, method, headers, body):
+    from curl_cffi import requests as cr
+    h = {k: v for k, v in headers.items() if k.lower() != "user-agent"}
+    r = cr.request(method, url, headers=h, data=body, impersonate="chrome", timeout=60, allow_redirects=True)
+    if r.status_code >= 400:
+        raise RuntimeError(f"HTTP {r.status_code} (curl_cffi) cf-mitigated={r.headers.get('cf-mitigated')} server={r.headers.get('server')}")
+    return str(r.url), r.headers.get("content-type", ""), r.content
+
 def http(url, method="GET", headers=None, body=None, binary=False):
-    h = {"User-Agent": UA}; h.update(headers or {})
+    h = {"User-Agent": UA}; h.update(BROWSER); h.update(headers or {})
     req = urllib.request.Request(url, data=body, method=method, headers=h)
-    with urllib.request.urlopen(req, timeout=60) as r:
-        data = r.read()
-        return r.geturl(), r.headers.get("Content-Type", ""), data
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = r.read()
+            return r.geturl(), r.headers.get("Content-Type", ""), data
+    except urllib.error.HTTPError as e:
+        print(f"  {e.code} {url} server={e.headers.get('server')} cf-mitigated={e.headers.get('cf-mitigated')}", file=sys.stderr)
+        if e.code in (401, 403, 429, 503):
+            try: return _cffi(url, method, h, body)
+            except ImportError: print("  curl_cffi not installed, no browser-TLS fallback", file=sys.stderr)
+        raise
 
 class Links(HTMLParser):
     def __init__(self): super().__init__(); self.urls = []

@@ -32,6 +32,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install browser-TLS HTTP client
+        run: pip install curl_cffi
+
       - name: Crawl page into refAudio/
         env:
           REF_DIR: refAudio
