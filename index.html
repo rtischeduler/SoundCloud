@@ -367,7 +367,7 @@ async function pget(url, { binary = false, retried = false } = {}) {
   const { libcurl } = await window.__getProxy({ say: status });
   try {
     const r = await withTimeout(libcurl.fetch(url, { headers: UA }), 25000, "Request");
-    if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; }
+    if (!r.ok) { const e = new Error("HTTP " + r.status + " " + new URL(url).pathname.slice(0, 60)); e.status = r.status; throw e; }
     return binary ? r.arrayBuffer() : r.text();
   } catch (e) {
     if (e.status || retried) throw e;
@@ -413,7 +413,7 @@ function render(list, append) {
     const img = document.createElement("img"); img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.src = art(o);
     const t = document.createElement("div"), b = document.createElement("b"), s = document.createElement("small");
     b.textContent = o.title || o.username || "Untitled";
-    s.textContent = o.kind === "track" ? (o.user ? o.user.username : "") + " · " + fmt(o.duration || 0)
+    s.textContent = o.kind === "track" ? (o.user ? o.user.username : "") + " · " + fmt(o.duration || 0) + (isDrm(o) ? " · 🔒 DRM" : "")
       : o.kind === "user" ? (o.followers_count || 0) + " followers" : (o.user ? o.user.username : "") + " · " + (o.track_count || 0) + " tracks";
     t.append(b, s); d.append(img, t);
     d.onclick = () => (o.kind === "track" ? play(o) : o.kind === "playlist" ? openPlaylist(o) : openUser(o));
@@ -475,13 +475,25 @@ class ProxyLoader {
   getCacheAge() { return null; }
   getResponseHeader() { return null; }
 }
-// prefer progressive mp3, then HLS mp3, then HLS AAC (hls.js can't do ogg/opus HLS)
-function pickTranscoding(list) {
+// playable streams, best first: progressive mp3, HLS mp3, HLS AAC (hls.js can't do ogg/opus HLS; *-encrypted-* is DRM and is not attempted)
+function rankTranscodings(list) {
   const mime = (x) => (x.format.mime_type || "").toLowerCase(), proto = (x) => x.format.protocol;
-  return list.find((x) => proto(x) === "progressive")
-    || list.find((x) => proto(x) === "hls" && mime(x).includes("mpeg"))
-    || list.find((x) => proto(x) === "hls" && mime(x).includes("mp4"))
-    || null;
+  return [
+    ...list.filter((x) => proto(x) === "progressive"),
+    ...list.filter((x) => proto(x) === "hls" && mime(x).includes("mpeg")),
+    ...list.filter((x) => proto(x) === "hls" && mime(x).includes("mp4")),
+  ];
+}
+const isDrm = (o) => !!(o.media && o.media.transcodings && o.media.transcodings.length && o.media.transcodings.every((x) => /encrypted/.test(x.format.protocol)));
+async function resolveStream(tc, track) {
+  const url = (tk) => tc.url + (tc.url.includes("?") ? "&" : "?") + "track_authorization=" + encodeURIComponent(tk || "");
+  try { return await api(url(track.track_authorization)); }
+  catch (e) {
+    if (e.status !== 404 && e.status !== 401 && e.status !== 403) throw e;
+    const fresh = await api(API + "/tracks/" + track.id);   // stale/missing track_authorization: refetch the track and retry once
+    const tc2 = rankTranscodings(fresh.media.transcodings || []).find((x) => x.preset === tc.preset && x.format.protocol === tc.format.protocol) || tc;
+    return api(tc2.url + (tc2.url.includes("?") ? "&" : "?") + "track_authorization=" + encodeURIComponent(fresh.track_authorization || ""));
+  }
 }
 async function play(t) {
   const au = $("au"); $("art").src = art(t);
@@ -491,16 +503,23 @@ async function play(t) {
     if (hls) { hls.destroy(); hls = null; }
     au.onerror = null;
     const full = t.media ? t : await api(API + "/tracks/" + t.id);
-    const tc = pickTranscoding(full.media.transcodings || []);
-    if (!tc) throw new Error("no playable stream (" + (full.media.transcodings || []).map((x) => x.format.protocol + " " + x.format.mime_type).join(", ") + ")");
-    const sep = tc.url.includes("?") ? "&" : "?";
-    const res = await api(tc.url + sep + "track_authorization=" + encodeURIComponent(full.track_authorization || ""));
+    const list = full.media.transcodings || [];
+    const ranked = rankTranscodings(list);
+    if (!ranked.length) {
+      if (isDrm(full)) throw new Error("this track is DRM-protected (encrypted HLS only, e.g. Go+), so it can't be played here");
+      throw new Error("no playable stream (" + list.map((x) => x.format.protocol + " " + x.format.mime_type).join(", ") + ")");
+    }
+    let res = null, tc = null; const errs = [];
+    for (const cand of ranked) {
+      try { res = await resolveStream(cand, full); tc = cand; break; } catch (e) { errs.push(String((e && e.message) || e)); }
+    }
+    if (!res) throw new Error("could not resolve a stream: " + errs.join(" | "));
     if (tc.format.protocol === "hls") {
       status("Loading HLS player…");
       const Hls = await loadHlsLib();
       if (!Hls.isSupported()) throw new Error("this browser has no Media Source support for HLS");
       hls = new Hls({ loader: ProxyLoader, maxBufferLength: 30, manifestLoadingMaxRetry: 2, fragLoadingMaxRetry: 3 });
-      hls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) status("Stream error: " + d.type + " / " + d.details); });
+      hls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) status("Stream error: " + d.type + " / " + d.details + (d.response ? " (" + d.response.code + " " + d.response.text + ")" : "")); });
       hls.on(Hls.Events.MANIFEST_PARSED, () => { au.play().catch(() => {}); status("Playing (HLS via proxy)"); });
       hls.loadSource(res.url); hls.attachMedia(au);
       return;
