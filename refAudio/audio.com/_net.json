@@ -1,0 +1,555 @@
+{
+  "nav": [
+    {
+      "url": "https://audio.com",
+      "status": 403,
+      "final": "https://audio.com/"
+    },
+    {
+      "url": "https://audio.com/search?q=lofi",
+      "status": 200,
+      "final": "https://audio.com/search?q=lofi"
+    },
+    {
+      "url": "https://audio.com/search/category/music?q=lofi",
+      "status": 200,
+      "final": "https://audio.com/search/category/music?q=lofi"
+    },
+    {
+      "url": "https://audio.com/richard-stephen-5/audio/01-dedication",
+      "status": 200,
+      "final": "https://audio.com/richard-stephen-5/audio/01-dedication"
+    },
+    {
+      "url": "https://audio.com/andrej-andreev-1881744655176527/audio/ulika-4-zvonok-1",
+      "status": 200,
+      "final": "https://audio.com/andrej-andreev-1881744655176527/audio/ulika-4-zvonok-1"
+    }
+  ],
+  "audio_links": [
+    "/richard-stephen-5/audio/01-dedication",
+    "/andrej-andreev-1881744655176527/audio/ulika-4-zvonok-1",
+    "/jens-1881742181323456/audio/01-01-hello-again-1",
+    "/sutharshanan/audio/thendral",
+    "/anushka-anand-1/audio/do-dhaari-talwaar-full-song-mere-brother-ki-dulhan-katrina-kaif-imran-khan-ali-zafar-tara",
+    "/anushka-anand-1/audio/gunni-shakira-vs-patola-official-remix-jatti-s-hips-dont-lie-gunni-128k",
+    "/gieffe/audio/reggaeton-teen-1-natale",
+    "/johnbarbaray/audio/sil-100",
+    "/diccio12/audio/amy1"
+  ],
+  "records": [
+    {
+      "url": "https://api.audio.com/analytics/experiments?id=1794572871538855&slugs=unified-session-popups",
+      "method": "GET",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc63b2c101f9b-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "date": "Fri, 13 Nov 2026 12:28:06 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[]",
+      "body_bytes": 2
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:09 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc64b2defa32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\",\"ok\",\"ok\",\"ok\",\"ok\",\"ok\",\"ok\"]",
+      "body_bytes": 36
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:12 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc65fef44a32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\"]",
+      "body_bytes": 6
+    },
+    {
+      "url": "https://s3.ustatik.com/audio.com.audio/transcoding/91/20/1881745971562091-1881745971610708-1881745989945651.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122711Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=b65126d680191a9bc002162f46ab80e5f773624dfbc0ae64007e1843b9894a49",
+      "method": "GET",
+      "status": 206,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "range": "bytes=0-",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "cf-cache-status": "HIT",
+        "etag": "\"c87a12820a90c8a68adeb854e15c3c8f\"",
+        "x-wasabi-cm-reference-id": "1794572850 F8-R301-U45.prod3.ams 5975246860:57577323:20",
+        "server-timing": "cfExtPri",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "date": "Fri, 13 Nov 2026 12:28:17 GMT",
+        "content-type": "audio/mpeg",
+        "last-modified": "Fri, 13 Nov 2026 12:27:03 GMT",
+        "priority": "u=3,i",
+        "x-amz-id-2": "NEzx7Vmfqimx3CX6shw8FsqEM2SkGCHtZGGi0Obfztb0plOZcj3xwoIV1UBEXr9FqiqPmuYeZp2s",
+        "cache-control": "no-store",
+        "content-range": "bytes 0-1166731/1166732",
+        "x-amz-request-id": "9B8AEF6F601FCB65:A",
+        "cf-ray": "a59dc68279a5ebc4-SEA",
+        "content-length": "1166732",
+        "server": "cloudflare"
+      },
+      "content_type": "audio/mpeg",
+      "body": null
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:17 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc6826932a32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\",\"ok\"]",
+      "body_bytes": 11
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:21 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc695fa46a32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\",\"ok\",\"ok\"]",
+      "body_bytes": 16
+    },
+    {
+      "url": "https://api.audio.com/analytics/experiments?id=1794572871538855&slugs=unified-session-popups",
+      "method": "GET",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:26 GMT",
+        "x-rate-limit-remaining": "99996",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc6b70d49a32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[]",
+      "body_bytes": 2
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:29 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc6c98ecaa32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\",\"ok\",\"ok\",\"ok\",\"ok\",\"ok\"]",
+      "body_bytes": 31
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:38 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc702cad8a32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\",\"ok\"]",
+      "body_bytes": 11
+    },
+    {
+      "url": "https://s3.ustatik.com/audio.com.audio/transcoding/45/73/1881745934617345-1881745934653728-1881745936978857.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122733Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=ea59551b0ba8edd5e0b9f65445594a5ee0cc7f58001913a954a590bfcdcf9039",
+      "method": "GET",
+      "status": 206,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "range": "bytes=0-",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "cf-cache-status": "MISS",
+        "etag": "\"18449cf901f04a1c10a441020913af88\"",
+        "x-wasabi-cm-reference-id": "1794572918 F8-R301-U45.prod3.ams 5975281626:57423126:65",
+        "server-timing": "cfExtPri",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "date": "Fri, 13 Nov 2026 12:28:38 GMT",
+        "content-type": "audio/mpeg",
+        "last-modified": "Fri, 13 Nov 2026 12:26:14 GMT",
+        "priority": "u=3,i",
+        "x-amz-id-2": "0kxLERs7YQLZ70ROIxjLtCFLFBqCbXPLvTRtEsxnvbS78wAXYDGXd3UYeF9OsdIPejC2rU/7996F",
+        "cache-control": "no-store",
+        "content-range": "bytes 0-986687/986688",
+        "x-amz-request-id": "87D92E9839DBDC13:A",
+        "cf-ray": "a59dc702ccbcebc4-SEA",
+        "content-length": "986688",
+        "server": "cloudflare"
+      },
+      "content_type": "audio/mpeg",
+      "body": null
+    },
+    {
+      "url": "https://api.audio.com/analytics/event",
+      "method": "POST",
+      "status": 200,
+      "request_headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://audio.com/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"158\", \"Not.A/Brand\";v=\"24\", \"HeadlessChrome\";v=\"158\"",
+        "content-type": "application/json",
+        "x-analytics-context": "{\"device_id\":1794572871538253,\"session_id\":1794572871538769,\"member_experiment_id\":1794572871538855}",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "post_data": null,
+      "response_headers": {
+        "access-control-max-age": "1728000",
+        "content-encoding": "gzip",
+        "cf-cache-status": "DYNAMIC",
+        "x-rate-limit-limit": "100000",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "server-timing": "cfExtPri",
+        "date": "Fri, 13 Nov 2026 12:28:42 GMT",
+        "x-rate-limit-remaining": "99999",
+        "content-type": "application/json; charset=UTF-8",
+        "vary": "Origin, accept-encoding",
+        "priority": "u=1,i",
+        "x-rate-limit-reset": "0",
+        "access-control-allow-credentials": "true",
+        "cf-ray": "a59dc719cc9ea32d-PDX",
+        "access-control-allow-origin": "https://audio.com",
+        "server": "cloudflare"
+      },
+      "content_type": "application/json; charset=UTF-8",
+      "body": "[\"ok\",\"ok\"]",
+      "body_bytes": 11
+    }
+  ],
+  "api_probe": [
+    {
+      "method": "POST",
+      "url": "https://api.audio.com/oauth/token",
+      "kw": {
+        "form": {
+          "grant_type": "client_credentials",
+          "client_id": "1736151285440235",
+          "client_secret": "nv7jOW7PMhnoRejBGXE72ArQadcfyP7b"
+        }
+      },
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"oauth/token\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.audio.com/oauth/token",
+      "kw": {
+        "data": "{\"grant_type\": \"client_credentials\", \"client_id\": \"1736151285440235\", \"client_secret\": \"nv7jOW7PMhnoRejBGXE72ArQadcfyP7b\"}"
+      },
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"oauth/token\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.audio.com/oauth2/token",
+      "kw": {
+        "form": {
+          "grant_type": "client_credentials",
+          "client_id": "1736151285440235",
+          "client_secret": "nv7jOW7PMhnoRejBGXE72ArQadcfyP7b"
+        }
+      },
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"oauth2/token\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.audio.com/auth/token",
+      "kw": {
+        "data": "{\"grant_type\": \"client_credentials\", \"client_id\": \"1736151285440235\", \"client_secret\": \"nv7jOW7PMhnoRejBGXE72ArQadcfyP7b\"}"
+      },
+      "status": 422,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"code\":0,\"status\":422,\"name\":\"Data Validation Failed.\",\"message\":\"Invalid input provided.\",\"errors\":{\"client_id\":\"Invalid grant type\"},\"error\":\"unsupported_grant_type\",\"error_description\":\"Invalid grant type\"}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/search/suggest?q=lofi",
+      "kw": {},
+      "status": 422,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"code\":0,\"status\":422,\"name\":\"Data Validation Failed.\",\"message\":\"Invalid input provided.\",\"errors\":{\"query\":\"Query cannot be blank\"}}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/search?q=lofi",
+      "kw": {},
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"items\":[{\"id\":\"1881746038053980\",\"type\":\"audio\",\"model\":{\"id\":\"1881746038053980\",\"user\":\"1881745968243601\",\"username\":\"john-doe-1881745968258374\",\"scraped_from\":\"none\",\"author\":\"john doe\",\"category\":4,\"category_name\":\"Music\",\"slug\":\"catwoman-instrumental-instagramtrending-reels-song-2026-lofi-remix-music-preet-192k\",\"license\":\"none\",\"title\":\"CATWOMAN INSTRUMENTAL InstagramTrending Reels Song 2026 Lofi Remix Music - Preet (192k)\",\"description\":\"\",\"avatar\":\"\",\"image\":\"\",\"listed\":true,\"downloadable\":true,\"browsable\":true,\"transcribed\":false,\"created\":1794572866,\"options\":{\"transcribe\":false},\"updated\":1794572879,\"play\":{\"duration\":165432,\"url\":\"https://s3.ustatik.com/audio.com.audio/transcoding/80/39/1881746038053980-1881746038099610-1881746040919318.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122802Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=42a53bd3f73c9a2c715438840ea757dda831d5f784542f273b64a0272811fe63\",\"waveform\":\"https://s3.ustatik.com/audio.com.audio/waveform/80/39/1881746038053980-1881746038099610.json?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122802Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=a0f4284ee376a0a4c2f7dfbddf3f02c35951204946780a22ae579e9eaefebf08\"},\"playhq\":{\"duration\":165432,\"url\":\"https://s3.ustatik.com/audio.com.audio/transcoding/80/39/1881746038053980-1881746038099610-1881746040940492.m4a?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122802Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=3aecc369505bd07ba51b7a76e12ac9182aa31f7d61c547e1cf6739813e546748\",\"waveform\":\"https://s3.ustatik.com/audio.com.audio/waveform/80/39/1881746038053980-1881746038099610.json?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122802Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=a0f4284ee376a0a4c2f7dfbddf3f02c35951204946780a22ae579e9eaefebf08\"},\"source\":{\"id\":\"1881746038099610\",\"format\":\"mp3\",\"type\":\"audio/mpeg\",\"url\":\"https://s3.ustatik.com/audio.com.audio/source/80/39/1881746038053980-1881746038099610.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122759Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=fe5a3a5b2d63da9076b83e3110ce18620f7f7feb060c75cf377263ca65e10b4b\",\"from\":\"audiocom\",\"download\":\"https://s3.ustatik.com/audio.com.audio/source/80/39/1881746038053980-1881746038099610.mp3?response-content-disposition=attachment%3B%20filename%3D%22CATWOMAN%20INSTRUMENTAL%20InstagramTrending%20Reels%20Song%202026%20Lofi%20Remix%20Music%20-%20Preet%20%28192k%29.mp3%22&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122759Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=43aadb30f3ce8e6611a4046735ccd9be467e7fe209bfe9c85d504c0ef13ae2bc\",\"size\":3970989,\"name\":\"CATWOMAN INSTRUMENTAL InstagramTrending Reels Song 2026 Lofi Remix Music - Preet (192k).mp3\",\"codec\":\"mp3\",\"sample_rate\":48000,\"channels\":2,\"duration\":165432,\"bit_rate\":192000,\"date_created\":1794572866,\"date_updated\":1794572876,\"date_uploaded\":1794572869,\"md5\":\"8ac0286cd2b7b1ecb289a046639c39bf\"},\"metadata\":null,\"stats\":{\"followers_count\":0,\"plays_count\":0,\"collections_count\":0,\"downloads_count\":0,\"comments_count\":0,\"shares_count\":0,\"likes_count\":0},\"tags\":[\"electronic\",\"downtempo\",\"music\",\"electric piano\",\"piano\"],\"cross_link_tags\":[{\"id\":\"music:downtempo\",\"sort\":\"\"},{\"id\":\"music:electric piano\",\"sort\":\"\"},{\"id\":\"music:electronic\",\"sort\":\"\"},{\"id\":\"music:music\",\"sort\":\"\"},{\"id\":\"music:piano\",\"sort\":\"\"}],\"price\":0},\"highlight\":{},\"content\":{}},{\"id\":\"1881745971562091\",\"type\":\"audio\",\"model\":{\"id\":\"1881745971562091\",\"user\":\"1881745633430307\",\"username\":\"richard-stephen-5\",\"scraped_from\":\"none\",\"author\":\"Richard Stephen\",\"category\":4,\"category_name\":\"Music\",\"slug\":\"01-dedication\",\"license\":\"none\",\"title\":\"01_Dedication\",\"description\":\"\",\"avatar\":\"\",\"image\":\"\",\"listed\":true,\"downloadable\":true,\"browsable\":true,\"transcribed\":false,\"created\":1794572803,\"options\":{\"transcribe\":false},\"updated\":1794572828,\"play\":{\"duration\":48588,\"url\":\"https://s3.ustatik.com/audio.com.audio/transcoding/91/20/1881745971562091-1881745971610708-1881745989945651.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122711Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=b65126d680191a9bc002162f46ab80e5f773624dfbc0ae64007e1843b9894a49\",\"waveform\":\"https://s3.ustatik.com/audio.com.audio/waveform/91/20/1881745971562091-1881745971610708.json?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122711Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=8bd9cd3b65c434619fee9098c97d3b582ea69fd5b77db2a346ce13da5f32e601\"},\"playhq\":{\"duration\":48588,\"url\":\"https://s3.ustatik.com/audio.com.audio/transcoding/91/20/1881745971562091-1881745971610708-1881745989965695.m4a?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122711Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=95efc7da9b10c22f11e83b66fed70d0f798f47f003"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/search/profile?q=lofi",
+      "kw": {},
+      "status": 401,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Unauthorized\",\"message\":\"Your request was made with invalid credentials.\",\"code\":0,\"status\":401}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/search/audio?q=lofi",
+      "kw": {},
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"search/audio\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/search/category/music?q=lofi",
+      "kw": {},
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"search/category/music\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/search/suggest?query=lofi",
+      "kw": {},
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"text\":\"lofi\",\"length\":4,\"offset\":0,\"items\":[\"#lofi\",\"lofi beats\",\"lofi hip hop\",\"lofi music \",\"lofi cafe\"]}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/discover",
+      "kw": {},
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"discover\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/audio-of-the-day",
+      "kw": {},
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"audio-of-the-day\\\".\",\"code\":0}}"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.audio.com/audios",
+      "kw": {},
+      "status": 404,
+      "content_type": "application/json; charset=UTF-8",
+      "body": "{\"name\":\"Not Found\",\"message\":\"Page not found.\",\"code\":0,\"status\":404,\"previous\":{\"name\":\"Invalid Route\",\"message\":\"Unable to resolve the request \\\"audios\\\".\",\"code\":0}}"
+    }
+  ],
+  "got_token": false
+}

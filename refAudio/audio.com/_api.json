@@ -1,11 +1,15 @@
 {
-  "client_ids": {},
-  "api_urls": [],
-  "search_paths": [
-    "/search",
-    "/search/category/music",
-    "search",
-    "search/profile",
-    "search/suggest"
-  ]
+  "api_base": "https://api.audio.com",
+  "client_id": "1736151285440235",
+  "client_secret": "nv7jOW7PMhnoRejBGXE72ArQadcfyP7b",
+  "token_obtained": false,
+  "endpoints": [
+    "/analytics/event",
+    "/analytics/experiments"
+  ],
+  "media_urls": [
+    "https://s3.ustatik.com/audio.com.audio/transcoding/45/73/1881745934617345-1881745934653728-1881745936978857.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122733Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=ea59551b0ba8edd5e0b9f65445594a5ee0cc7f58001913a954a590bfcdcf9039",
+    "https://s3.ustatik.com/audio.com.audio/transcoding/91/20/1881745971562091-1881745971610708-1881745989945651.mp3?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=F0E8U41NBMMW3Y027UTJ%2F20261113%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261113T122711Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Signature=b65126d680191a9bc002162f46ab80e5f773624dfbc0ae64007e1843b9894a49"
+  ],
+  "js_files_saved": 80
 }
