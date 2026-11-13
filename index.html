@@ -448,16 +448,63 @@ async function openUser(u) {
   try { await show(await api(API + "/users/" + u.id + "/tracks?limit=24&linked_partitioning=1"), false); }
   catch (e) { status("Failed: " + (e.message || e)); }
 }
+const HLS_SRC = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
+let hlsLib = null, hls = null;
+function loadHlsLib() {
+  return (hlsLib ||= new Promise((res, rej) => {
+    if (window.Hls) return res(window.Hls);
+    const sc = document.createElement("script"); sc.src = HLS_SRC;
+    sc.onload = () => res(window.Hls); sc.onerror = () => { hlsLib = null; rej(new Error("hls.js failed to load")); };
+    document.head.append(sc);
+  }));
+}
+// hls.js loader that pulls the playlist and every segment through the Singuloxy proxy (pget)
+class ProxyLoader {
+  constructor() { this.context = null; this.stats = { aborted: false, loaded: 0, retry: 0, total: 0, chunkCount: 0, bwEstimate: 0, loading: { start: 0, first: 0, end: 0 }, parsing: { start: 0, end: 0 }, buffering: { start: 0, first: 0, end: 0 } }; }
+  load(context, config, callbacks) {
+    this.context = context; const st = this.stats; st.loading.start = performance.now();
+    const bin = context.responseType === "arraybuffer";
+    pget(context.url, { binary: bin }).then((data) => {
+      if (st.aborted) return;
+      st.loading.first = st.loading.end = performance.now(); st.loaded = st.total = bin ? data.byteLength : data.length;
+      callbacks.onSuccess({ url: context.url, data }, st, context, null);
+    }).catch((e) => { if (!st.aborted) callbacks.onError({ code: e.status || 0, text: String((e && e.message) || e) }, context, null, st); });
+  }
+  abort() { this.stats.aborted = true; }
+  destroy() {}
+  getCacheAge() { return null; }
+  getResponseHeader() { return null; }
+}
+// prefer progressive mp3, then HLS mp3, then HLS AAC (hls.js can't do ogg/opus HLS)
+function pickTranscoding(list) {
+  const mime = (x) => (x.format.mime_type || "").toLowerCase(), proto = (x) => x.format.protocol;
+  return list.find((x) => proto(x) === "progressive")
+    || list.find((x) => proto(x) === "hls" && mime(x).includes("mpeg"))
+    || list.find((x) => proto(x) === "hls" && mime(x).includes("mp4"))
+    || null;
+}
 async function play(t) {
   const au = $("au"); $("art").src = art(t);
   $("now").firstChild.textContent = t.title; $("now").lastChild.textContent = t.user ? t.user.username : "";
   status("Resolving stream…");
   try {
+    if (hls) { hls.destroy(); hls = null; }
+    au.onerror = null;
     const full = t.media ? t : await api(API + "/tracks/" + t.id);
-    const tc = (full.media.transcodings || []).find((x) => x.format.protocol === "progressive") || null;
-    if (!tc) throw new Error("no progressive stream (HLS only)");
+    const tc = pickTranscoding(full.media.transcodings || []);
+    if (!tc) throw new Error("no playable stream (" + (full.media.transcodings || []).map((x) => x.format.protocol + " " + x.format.mime_type).join(", ") + ")");
     const sep = tc.url.includes("?") ? "&" : "?";
     const res = await api(tc.url + sep + "track_authorization=" + encodeURIComponent(full.track_authorization || ""));
+    if (tc.format.protocol === "hls") {
+      status("Loading HLS player…");
+      const Hls = await loadHlsLib();
+      if (!Hls.isSupported()) throw new Error("this browser has no Media Source support for HLS");
+      hls = new Hls({ loader: ProxyLoader, maxBufferLength: 30, manifestLoadingMaxRetry: 2, fragLoadingMaxRetry: 3 });
+      hls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) status("Stream error: " + d.type + " / " + d.details); });
+      hls.on(Hls.Events.MANIFEST_PARSED, () => { au.play().catch(() => {}); status("Playing (HLS via proxy)"); });
+      hls.loadSource(res.url); hls.attachMedia(au);
+      return;
+    }
     au.onerror = async () => {   // direct CDN blocked? pull the audio through the proxy instead
       au.onerror = null; status("Direct stream blocked, loading through proxy…");
       try { au.src = URL.createObjectURL(new Blob([await pget(res.url, { binary: true })], { type: "audio/mpeg" })); au.play(); status("Playing (proxied)"); }
