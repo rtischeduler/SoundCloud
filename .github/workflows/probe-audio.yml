@@ -1,0 +1,51 @@
+name: Probe audio.com
+
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: "Search query to probe with"
+        default: "lofi"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: probe-audio
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+
+      - name: Probe audio.com network traffic
+        env:
+          REF_DIR: refAudio
+          PROBE_QUERY: ${{ inputs.query || 'lofi' }}
+        run: python scripts/probe_audio.py
+
+      - name: Commit refAudio/ to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A refAudio
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Probe audio.com API traffic into refAudio/"
+            git pull --rebase origin main
+            git push origin main
+          fi
