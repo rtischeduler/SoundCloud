@@ -1,0 +1,11 @@
+{
+  "client_ids": {},
+  "api_urls": [],
+  "search_paths": [
+    "/search",
+    "/search/category/music",
+    "search",
+    "search/profile",
+    "search/suggest"
+  ]
+}
